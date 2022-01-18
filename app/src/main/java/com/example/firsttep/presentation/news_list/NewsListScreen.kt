@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -16,19 +17,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import coil.compose.rememberImagePainter
 import com.example.firsttep.common.AppTheme.defaultPadding
-import com.example.firsttep.presentation.ScreenRoute
+import com.example.firsttep.data.remote.dto.Article
+import com.example.firsttep.navigation.ScreenRoute
 import com.example.firsttep.presentation.news_list.components.HeadlineNewsItem
 import com.example.firsttep.presentation.news_list.components.NewsItem
+import com.example.firsttep.ui.theme.Typography
 import com.example.firsttep.utility.toJsonString
 
 @ExperimentalMaterialApi
@@ -63,8 +68,7 @@ fun NewsListScreen(
                     Text(
                         modifier = defaultPadding(),
                         text = "Welcome Back, \nArul",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 24.sp
+                        style = Typography.h2
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
@@ -75,34 +79,27 @@ fun NewsListScreen(
                     )
                     NewsContent(state = headLineState, navController = navController)
                     Spacer(Modifier.height(8.dp))
-                    RecommendedNews(state = recommendNewsState, navController = navController)
+                    Row(
+                        defaultPadding()
+                    ) {
+                        Text(
+                            text = "Just For You",
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.weight(1F)
+                        )
+                        Text(text = "See More", color = Color.Blue, fontSize = 14.sp)
+                    }
+                    Spacer(Modifier.height(8.dp))
                 }
             }
         }
-    }
-}
-
-@ExperimentalMaterialApi
-@Composable
-fun RecommendedNews(state: State<MainState>, navController: NavController) {
-    Column(defaultPadding()) {
-        Row {
-            Text(
-                text = "Just For You",
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1F)
-            )
-            Text(text = "See More", color = Color.Blue, fontSize = 14.sp)
-        }
-        Spacer(Modifier.height(8.dp))
-        Box(modifier = Modifier.fillMaxSize()) {
-            when (val value = state.value) {
-                MainState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is MainState.OnError -> {
+        item {
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                if (recommendNewsState.value is MainState.Loading) {
+                    CircularProgressIndicator()
+                } else if (recommendNewsState.value is MainState.OnError) {
                     Text(
-                        text = value.error?.displayMessage!!,
+                        text = (recommendNewsState.value as MainState.OnError).error?.displayMessage!!,
                         color = MaterialTheme.colors.error,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -110,32 +107,19 @@ fun RecommendedNews(state: State<MainState>, navController: NavController) {
                             .padding(horizontal = 20.dp)
                     )
                 }
-                is MainState.ReceiveNews -> {
-                    value.news?.let {
-                        if (it.isEmpty())
-                            Text(
-                                text = "Empty news :)",
-                                color = MaterialTheme.colors.error,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 20.dp)
-                            )
-                        else {
-                            val news = value.news
-                            items(items = news) { article ->
-                                NewsItem(article = article) { selectedArticle ->
-                                    val articleObjString = selectedArticle.toJsonString()
-                                    val action =
-                                        ScreenRoute.NewsDetailScreen.route.replace(
-                                            "{Article}",
-                                            articleObjString
-                                        )
-                                    navController.navigate(action)
-                                }
-                            }
-                        }
-                    }
+            }
+        }
+        if (recommendNewsState.value is MainState.ReceiveNews) {
+            val news: List<Article> = (recommendNewsState.value as MainState.ReceiveNews).news!!
+            items(items = news) { article ->
+                NewsItem(article = article) { selectedArticle ->
+                    val articleObjString = selectedArticle.toJsonString()
+                    val action =
+                        ScreenRoute.NewsDetailScreen.route.replace(
+                            "{Article}",
+                            articleObjString
+                        )
+                    navController.navigate(action)
                 }
             }
         }

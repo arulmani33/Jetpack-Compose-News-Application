@@ -6,7 +6,7 @@ import java.io.Serializable
 
 data class Article(
     val author: Any,
-    val content: String,
+    val content: String? = null,
     val description: String? = null,
     val publishedAt: String,
     val source: Source,

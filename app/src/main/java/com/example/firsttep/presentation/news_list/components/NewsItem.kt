@@ -2,6 +2,7 @@ package com.example.firsttep.presentation.news_list.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -23,6 +24,7 @@ import coil.compose.rememberImagePainter
 import com.example.firsttep.common.Tag
 import com.example.firsttep.data.remote.dto.Article
 import com.example.firsttep.data.remote.dto.Source
+import com.example.firsttep.ui.theme.Typography
 import com.example.firsttep.utility.Constants
 import com.example.firsttep.utility.dateToTimeAgo
 import com.google.android.material.chip.Chip
@@ -33,15 +35,23 @@ fun NewsItem(
     article: Article,
     onItemClick: (Article) -> Unit
 ) {
-    Row(Modifier.height(150.dp)) {
+    Row(
+        Modifier
+            .height(150.dp)
+            .padding(horizontal = 16.dp)
+            .clickable { onItemClick(article) }) {
         Box(Modifier.weight(1F)) {
             Column {
                 Spacer(modifier = Modifier.height(8.dp))
                 Tag(text = "New")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = article.title, maxLines = 2, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = article.title, maxLines = 2, style = Typography.h3)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = article.publishedAt.dateToTimeAgo() ?: "-", fontSize = 10.sp, fontWeight = FontWeight.Light)
+                Text(
+                    text = article.publishedAt.dateToTimeAgo() ?: "-",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Light
+                )
             }
         }
         Card(
@@ -50,8 +60,7 @@ fun NewsItem(
                 .width(150.dp)
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .fillMaxHeight(),
-            elevation = 10.dp,
-            onClick = { onItemClick(article) }
+            elevation = 10.dp
         ) {
             Image(
                 painter = rememberImagePainter(

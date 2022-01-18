@@ -59,7 +59,7 @@ fun ArticleContent(article: Article, navController: NavController) {
     )
     Spacer(Modifier.height(8.dp))
     Text(
-        text = article.content,
+        text = article.content ?: "-",
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
