@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.firsttep.data.remote.dto.Article
 import com.example.firsttep.data.remote.dto.Source
+import com.example.firsttep.ui.theme.Shapes
 import com.example.firsttep.utility.Constants
 
 @ExperimentalMaterialApi
@@ -30,8 +31,9 @@ fun HeadlineNewsItem(
     onItemClick: (Article) -> Unit
 ) {
     Row {
+        Spacer(modifier = Modifier.width(10.dp))
         Card(
-            shape = CircleShape.copy(CornerSize(6)),
+            shape = Shapes.medium,
             elevation = 10.dp,
             onClick = { onItemClick(article) }
         ) {
@@ -78,7 +80,7 @@ fun HeadlineNewsItem(
                 }
             }
         }
-        Spacer(modifier = Modifier.width(20.dp))
+        Spacer(modifier = Modifier.width(10.dp))
     }
 }
 

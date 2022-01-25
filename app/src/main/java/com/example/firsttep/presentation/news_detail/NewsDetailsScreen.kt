@@ -32,7 +32,7 @@ fun NewsDetailsScreen(
     viewModel: NewsDetailViewModel = hiltViewModel()
 ) {
     Column {
-        TitleImage(article = article, navController)
+        TitleImage(article = article)
         ArticleContent(article, navController)
     }
 
@@ -75,7 +75,7 @@ fun ArticleContent(article: Article, navController: NavController) {
 }
 
 @Composable
-fun TitleImage(article: Article, navController: NavController) {
+fun TitleImage(article: Article) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

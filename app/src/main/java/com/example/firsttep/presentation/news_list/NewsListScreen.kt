@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import coil.compose.rememberImagePainter
 import com.example.firsttep.common.AppTheme.defaultPadding
+import com.example.firsttep.common.CustomComp
+import com.example.firsttep.common.CustomTimer
 import com.example.firsttep.data.remote.dto.Article
 import com.example.firsttep.navigation.ScreenRoute
 import com.example.firsttep.presentation.news_list.components.HeadlineNewsItem
@@ -160,6 +164,7 @@ fun NewsContent(state: State<MainState>, navController: NavController) {
             .fillMaxWidth()
             .height(250.dp)
     ) {
+
         when (val value = state.value) {
             MainState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -187,17 +192,16 @@ fun NewsContent(state: State<MainState>, navController: NavController) {
                         )
                     else
                         LazyRow(
-                            modifier = Modifier.padding(start = 16.dp, bottom = 14.dp, top = 6.dp)
+                            modifier = Modifier.padding(bottom = 14.dp, top = 6.dp)
                         ) {
                             val news = value.news
                             items(items = news) { article ->
                                 HeadlineNewsItem(article = article) { selectedArticle ->
                                     val articleObjString = selectedArticle.toJsonString()
-                                    val action =
-                                        ScreenRoute.NewsDetailScreen.route.replace(
-                                            "{Article}",
+                                    val action = ScreenRoute.NewsDetailScreen.route.replace(
+                                        "{Article}",
                                             articleObjString
-                                        )
+                                    )
                                     navController.navigate(action)
                                 }
                             }
